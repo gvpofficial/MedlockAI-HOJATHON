@@ -24,10 +24,17 @@ async function fetchAPI<T>(endpoint: string, options: RequestInit = {}): Promise
     headers['Authorization'] = `Bearer ${session.access_token}`;
   }
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    ...options,
-    headers,
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      ...options,
+      headers,
+    });
+  } catch (netErr: any) {
+    throw new Error(
+      `Cannot connect to MedLock AI backend at ${API_BASE_URL}. Ensure the backend server is running (e.g. python backend/run.py).`
+    );
+  }
 
   if (!response.ok) {
     let errorDetail = 'API request failed';

@@ -12,7 +12,10 @@ import {
   PlayCircle, 
   LogOut, 
   ChevronDown,
-  Activity
+  Activity,
+  LogIn,
+  Menu,
+  X
 } from 'lucide-react';
 import { getStoredSession, clearStoredSession, setStoredSession, DEMO_PRESET_USERS } from '@/lib/auth';
 import { api } from '@/lib/api';
@@ -24,9 +27,12 @@ export default function NavigationHeader() {
   const [session, setSession] = useState<UserSession | null>(null);
   const [isRoleMenuOpen, setIsRoleMenuOpen] = useState(false);
   const [isSwitching, setIsSwitching] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     setSession(getStoredSession());
+    setIsMobileMenuOpen(false);
+    setIsRoleMenuOpen(false);
   }, [pathname]);
 
   const handleRoleSwitch = async (email: string) => {
@@ -83,7 +89,7 @@ export default function NavigationHeader() {
         </Link>
 
         {/* Center Nav Links */}
-        <nav className="hidden md:flex items-center gap-1 bg-slate-100/70 p-1 rounded-xl border border-slate-200/60 text-sm font-medium">
+        <nav className="hidden lg:flex items-center gap-1 bg-slate-100/70 p-1 rounded-xl border border-slate-200/60 text-sm font-medium">
           <Link
             href="/demo"
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors ${
@@ -95,40 +101,44 @@ export default function NavigationHeader() {
           </Link>
           <Link
             href="/patient"
-            className={`px-3 py-1.5 rounded-lg transition-colors ${
-              pathname === '/patient' ? 'bg-white text-slate-900 shadow-sm font-semibold' : 'text-slate-600 hover:text-slate-900'
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors ${
+              pathname === '/patient' ? 'bg-white text-emerald-700 shadow-sm font-semibold' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Patient Portal
+            <User className="w-4 h-4 text-emerald-600" />
+            <span>Patient Portal</span>
           </Link>
           <Link
             href="/doctor"
-            className={`px-3 py-1.5 rounded-lg transition-colors ${
-              pathname === '/doctor' ? 'bg-white text-slate-900 shadow-sm font-semibold' : 'text-slate-600 hover:text-slate-900'
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors ${
+              pathname === '/doctor' ? 'bg-white text-blue-700 shadow-sm font-semibold' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Doctor Portal
+            <Stethoscope className="w-4 h-4 text-blue-600" />
+            <span>Doctor Portal</span>
           </Link>
           <Link
             href="/pharmacy"
-            className={`px-3 py-1.5 rounded-lg transition-colors ${
-              pathname === '/pharmacy' ? 'bg-white text-slate-900 shadow-sm font-semibold' : 'text-slate-600 hover:text-slate-900'
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors ${
+              pathname === '/pharmacy' ? 'bg-white text-purple-700 shadow-sm font-semibold' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Pharmacy Portal
+            <Building2 className="w-4 h-4 text-purple-600" />
+            <span>Pharmacy Portal</span>
           </Link>
           <Link
             href="/admin"
-            className={`px-3 py-1.5 rounded-lg transition-colors ${
-              pathname === '/admin' ? 'bg-white text-slate-900 shadow-sm font-semibold' : 'text-slate-600 hover:text-slate-900'
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors ${
+              pathname === '/admin' ? 'bg-white text-amber-700 shadow-sm font-semibold' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Admin & Review
+            <ShieldAlert className="w-4 h-4 text-amber-600" />
+            <span>Admin & Review</span>
           </Link>
         </nav>
 
-        {/* Right Section: Role Switcher & Profile */}
-        <div className="flex items-center gap-3">
+        {/* Right Section: Role Switcher & Profile or Sign In */}
+        <div className="flex items-center gap-2 sm:gap-3">
           {session ? (
             <div className="relative">
               <button
@@ -172,7 +182,15 @@ export default function NavigationHeader() {
                       </button>
                     ))}
                   </div>
-                  <div className="pt-2 border-t border-slate-100">
+                  <div className="pt-2 border-t border-slate-100 space-y-1">
+                    <Link
+                      href="/login"
+                      onClick={() => setIsRoleMenuOpen(false)}
+                      className="w-full flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs text-slate-700 hover:bg-slate-50 font-medium transition"
+                    >
+                      <LogIn className="w-3.5 h-3.5 text-brand-600" />
+                      Sign In with another account
+                    </Link>
                     <button
                       onClick={handleLogout}
                       className="w-full flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs text-rose-600 hover:bg-rose-50 font-medium transition"
@@ -188,22 +206,101 @@ export default function NavigationHeader() {
             <div className="flex items-center gap-2">
               <Link
                 href="/login"
-                className="px-4 py-2 text-sm font-medium text-slate-700 hover:text-slate-900"
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 text-sm font-semibold rounded-xl border transition-all shadow-sm ${
+                  pathname === '/login'
+                    ? 'border-brand-500 bg-brand-50 text-brand-700 ring-2 ring-brand-500/20 shadow-brand-500/10'
+                    : 'border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 hover:text-slate-900'
+                }`}
               >
-                Sign In
+                <LogIn className="w-4 h-4 text-brand-600" />
+                <span>Sign In</span>
               </Link>
               <Link
                 href="/demo"
-                className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-sm transition"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-sm shadow-brand-500/20 hover:shadow-brand-500/30 transition group"
               >
-                <PlayCircle className="w-4 h-4" />
-                Live Demo
+                <PlayCircle className="w-4 h-4 text-white/90 group-hover:scale-110 transition-transform" />
+                <span className="hidden sm:inline">Live Demo</span>
+                <span className="sm:hidden">Demo</span>
+              </Link>
+            </div>
+          )}
+
+          {/* Mobile Menu Toggle Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="lg:hidden p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition"
+            aria-label="Toggle mobile menu"
+          >
+            {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
+
+      </div>
+
+      {/* Mobile Drawer Navigation */}
+      {isMobileMenuOpen && (
+        <div className="lg:hidden border-t border-slate-200/80 bg-white px-4 py-3 space-y-1 shadow-lg">
+          <Link
+            href="/demo"
+            className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition ${
+              pathname === '/demo' ? 'bg-brand-50 text-brand-700 font-semibold' : 'text-slate-600 hover:bg-slate-50'
+            }`}
+          >
+            <PlayCircle className="w-4 h-4 text-brand-600" />
+            <span>Judge Demo Arena</span>
+          </Link>
+          <Link
+            href="/patient"
+            className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition ${
+              pathname === '/patient' ? 'bg-emerald-50 text-emerald-800 font-semibold' : 'text-slate-600 hover:bg-slate-50'
+            }`}
+          >
+            <User className="w-4 h-4 text-emerald-600" />
+            <span>Patient Portal</span>
+          </Link>
+          <Link
+            href="/doctor"
+            className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition ${
+              pathname === '/doctor' ? 'bg-blue-50 text-blue-800 font-semibold' : 'text-slate-600 hover:bg-slate-50'
+            }`}
+          >
+            <Stethoscope className="w-4 h-4 text-blue-600" />
+            <span>Doctor Portal</span>
+          </Link>
+          <Link
+            href="/pharmacy"
+            className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition ${
+              pathname === '/pharmacy' ? 'bg-purple-50 text-purple-800 font-semibold' : 'text-slate-600 hover:bg-slate-50'
+            }`}
+          >
+            <Building2 className="w-4 h-4 text-purple-600" />
+            <span>Pharmacy Portal</span>
+          </Link>
+          <Link
+            href="/admin"
+            className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition ${
+              pathname === '/admin' ? 'bg-amber-50 text-amber-800 font-semibold' : 'text-slate-600 hover:bg-slate-50'
+            }`}
+          >
+            <ShieldAlert className="w-4 h-4 text-amber-600" />
+            <span>Admin & Review</span>
+          </Link>
+          {!session && (
+            <div className="pt-2 border-t border-slate-100">
+              <Link
+                href="/login"
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition ${
+                  pathname === '/login' ? 'bg-brand-50 text-brand-700' : 'text-slate-700 hover:bg-slate-50'
+                }`}
+              >
+                <LogIn className="w-4 h-4 text-brand-600" />
+                <span>Sign In</span>
               </Link>
             </div>
           )}
         </div>
-
-      </div>
+      )}
     </header>
   );
 }
